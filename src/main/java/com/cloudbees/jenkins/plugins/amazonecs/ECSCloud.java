@@ -51,7 +51,7 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.RegionUtils;
 import com.amazonaws.regions.Regions;
-import com.amazonaws.services.ecs.AmazonECSClient;
+import com.amazonaws.services.ecs.AmazonECS;
 import com.amazonaws.services.ecs.model.ListClustersRequest;
 import com.amazonaws.services.ecs.model.ListClustersResult;
 import com.cloudbees.jenkins.plugins.awscredentials.AWSCredentialsHelper;
@@ -133,7 +133,7 @@ public class ECSCloud extends Cloud {
         return ecsService;
     }
 
-    AmazonECSClient getAmazonECSClient() {
+    AmazonECS getAmazonECSClient() {
         return getEcsService().getAmazonECSClient();
     }
 
@@ -352,7 +352,7 @@ public class ECSCloud extends Cloud {
         public ListBoxModel doFillClusterItems(@QueryParameter String credentialsId, @QueryParameter String regionName) {
             ECSService ecsService = new ECSService(credentialsId, regionName);
             try {
-                final AmazonECSClient client = ecsService.getAmazonECSClient();
+                final AmazonECS client = ecsService.getAmazonECSClient();
                 final List<String> allClusterArns = new ArrayList<String>();
                 String lastToken = null;
                 do {
