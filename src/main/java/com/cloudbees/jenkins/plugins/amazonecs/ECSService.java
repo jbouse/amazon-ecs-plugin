@@ -104,12 +104,13 @@ class ECSService {
     }
 
     AmazonECS getAmazonECSClient() {
-        final AmazonECS client;
+        final AmazonECSClientBuilder client = AmazonECSClientBuilder.standard();
 
         ProxyConfiguration proxy = Jenkins.getInstance().proxy;
         ClientConfiguration clientConfiguration = new ClientConfiguration();
+
         if(proxy != null) {
-            clientConfiguration = clientConfiguration
+            clientConfiguration
                 .withProxyHost(proxy.name)
                 .withProxyPort(proxy.port)
                 .withProxyUsername(proxy.getUserName())
@@ -120,30 +121,27 @@ class ECSService {
         if (credentials == null) {
             // no credentials provided, rely on com.amazonaws.auth.DefaultAWSCredentialsProviderChain
             // to use IAM Role define at the EC2 instance level ...
-            client = AmazonECSClientBuilder.standard()
-                .withClientConfiguration(clientConfiguration)
-                .build();
+            client.withClientConfiguration(clientConfiguration);
         } else {
             if (LOGGER.isLoggable(Level.FINE)) {
                 String awsAccessKeyId = credentials.getCredentials().getAWSAccessKeyId();
                 String obfuscatedAccessKeyId = StringUtils.left(awsAccessKeyId, 4) + StringUtils.repeat("*", awsAccessKeyId.length() - (2 * 4)) + StringUtils.right(awsAccessKeyId, 4);
                 LOGGER.log(Level.FINE, "Connect to Amazon ECS with IAM Access Key {1}", new Object[]{obfuscatedAccessKeyId});
             }
-            client = AmazonECSClientBuilder.standard()
+            client
                 .withClientConfiguration(clientConfiguration)
-                .withCredentials(credentials)
-                .build();
+                .withCredentials(credentials);
         }
-        client.setRegion(getRegion(regionName));
+        client.withRegion(getRegion(regionName));
         LOGGER.log(Level.FINE, "Selected Region: {0}", regionName);
-        return client;
+        return client.build();
     }
 
-    Region getRegion(String regionName) {
+    Regions getRegion(String regionName) {
         if (StringUtils.isNotEmpty(regionName)) {
-            return RegionUtils.getRegion(regionName);
+            return Regions.fromName(regionName);
         } else {
-            return Region.getRegion(Regions.US_EAST_1);
+            return Regions.US_EAST_1;
         }
     }
 
