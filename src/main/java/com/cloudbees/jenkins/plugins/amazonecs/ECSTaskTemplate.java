@@ -50,6 +50,12 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
+import com.cloudbees.jenkins.plugins.amazonecs.model.EnvironmentEntry;
+import com.cloudbees.jenkins.plugins.amazonecs.model.ExtraHostEntry;
+import com.cloudbees.jenkins.plugins.amazonecs.model.LogDriverOption;
+import com.cloudbees.jenkins.plugins.amazonecs.model.MountPointEntry;
+import com.cloudbees.jenkins.plugins.amazonecs.model.PortMappingEntry;
+
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -415,29 +421,8 @@ public class ECSTaskTemplate extends AbstractDescribableImpl<ECSTaskTemplate> {
         return logDriver;
     }
 
-    public String getTemplateName() {return templateName; }
-
-    public static class LogDriverOption extends AbstractDescribableImpl<LogDriverOption>{
-        public String name, value;
-
-        @DataBoundConstructor
-        public LogDriverOption(String name, String value) {
-            this.name = name;
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return "LogDriverOption{" + name + ": " + value + "}";
-        }
-
-        @Extension
-        public static class DescriptorImpl extends Descriptor<LogDriverOption> {
-            @Override
-            public String getDisplayName() {
-                return "logDriverOption";
-            }
-        }
+    public String getTemplateName() {
+        return templateName;
     }
 
     public List<LogDriverOption> getLogDriverOptions() {
@@ -557,119 +542,6 @@ public class ECSTaskTemplate extends AbstractDescribableImpl<ECSTaskTemplate> {
                                        .withProtocol(protocol));
         }
         return ports;
-    }
-
-    public static class EnvironmentEntry extends AbstractDescribableImpl<EnvironmentEntry> {
-        public String name, value;
-
-        @DataBoundConstructor
-        public EnvironmentEntry(String name, String value) {
-            this.name = name;
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return "EnvironmentEntry{" + name + ": " + value + "}";
-        }
-
-        @Extension
-        public static class DescriptorImpl extends Descriptor<EnvironmentEntry> {
-            @Override
-            public String getDisplayName() {
-                return "EnvironmentEntry";
-            }
-        }
-    }
-
-    public static class ExtraHostEntry extends AbstractDescribableImpl<ExtraHostEntry> {
-        public String ipAddress, hostname;
-
-        @DataBoundConstructor
-        public ExtraHostEntry(String ipAddress, String hostname) {
-            this.ipAddress = ipAddress;
-            this.hostname = hostname;
-        }
-
-        @Override
-        public String toString() {
-            return "ExtraHostEntry{" + ipAddress + ": " + hostname + "}";
-        }
-
-        @Extension
-        public static class DescriptorImpl extends Descriptor<ExtraHostEntry> {
-            @Override
-            public String getDisplayName() {
-                return "ExtraHostEntry";
-            }
-        }
-    }
-
-    public static class MountPointEntry extends AbstractDescribableImpl<MountPointEntry> {
-        public String name, sourcePath, containerPath;
-        public Boolean readOnly;
-
-        @DataBoundConstructor
-        public MountPointEntry(String name,
-                               String sourcePath,
-                               String containerPath,
-                               Boolean readOnly) {
-            this.name = name;
-            this.sourcePath = sourcePath;
-            this.containerPath = containerPath;
-            this.readOnly = readOnly;
-        }
-
-        @Override
-        public String toString() {
-            return "MountPointEntry{name:" + name +
-                   ", sourcePath:" + sourcePath +
-                   ", containerPath:" + containerPath +
-                   ", readOnly:" + readOnly + "}";
-        }
-
-        @Extension
-        public static class DescriptorImpl extends Descriptor<MountPointEntry> {
-            @Override
-            public String getDisplayName() {
-                return "MountPointEntry";
-            }
-        }
-    }
-
-    public static class PortMappingEntry extends AbstractDescribableImpl<PortMappingEntry> {
-        public Integer containerPort, hostPort;
-        public String protocol;
-
-        @DataBoundConstructor
-        public PortMappingEntry(Integer containerPort, Integer hostPort, String protocol) {
-            this.containerPort = containerPort;
-            this.hostPort = hostPort;
-            this.protocol = protocol;
-        }
-
-        @Override
-        public String toString() {
-            return "PortMappingEntry{" +
-                    "containerPort=" + containerPort +
-                    ", hostPort=" + hostPort +
-                    ", protocol='" + protocol + "}";
-        }
-
-        @Extension
-        public static class DescriptorImpl extends Descriptor<PortMappingEntry> {
-            public ListBoxModel doFillProtocolItems() {
-                final ListBoxModel options = new ListBoxModel();
-                options.add("TCP", "tcp");
-                options.add("UDP", "udp");
-                return options;
-            }
-
-            @Override
-            public String getDisplayName() {
-                return "PortMappingEntry";
-            }
-        }
     }
 
     public Set<LabelAtom> getLabelSet() {
